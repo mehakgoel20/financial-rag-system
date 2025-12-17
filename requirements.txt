@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+pydantic
+numpy
+scikit-learn
+rank-bm25
+sentence-transformers
+torch
+qdrant-client
