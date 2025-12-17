@@ -1,0 +1,22 @@
+# ---- Secrets ----
+.env
+
+# ---- Data (never commit datasets) ----
+data/raw/
+data/processed/
+
+# ---- Vector DB local storage ----
+qdrant_data/
+qdrant_storage/
+
+# ---- Python cache ----
+__pycache__/
+*.pyc
+*.pyo
+
+# ---- Virtual environments ----
+venv/
+.venv/
+
+# ---- OS junk ----
+.DS_Store
