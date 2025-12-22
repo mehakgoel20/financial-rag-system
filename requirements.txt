@@ -7,3 +7,7 @@ rank-bm25
 sentence-transformers
 torch
 qdrant-client
+python-dotenv
+redis
+openai
+

@@ -51,6 +51,9 @@ class BM25Retriever:
             results.append(chunk)
 
         return results
+    def retrieve(self, query: str, top_k: int):
+        return self.search(query, top_k)
+
 
 
 if __name__ == "__main__":

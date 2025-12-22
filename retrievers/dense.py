@@ -10,17 +10,19 @@ COLLECTION_NAME = "finqa_chunks"
 
 class DenseRetriever:
     def __init__(self, data_path: str):
-        self.data_path = data_path
         self.model = SentenceTransformer("intfloat/e5-base-v2")
-
         self.client = QdrantClient(
-    host="qdrant",
-    port=6333
-)
+            host="qdrant",   # docker-compose service name
+            port=6333
+        )
+        self.collection_name = "finqa"
+        self.data_path = data_path
 
-        self._load_data()
         self._setup_collection()
-        self._index_data()
+
+        # self._load_data()
+        # self._setup_collection()
+        # self._index_data()
 
     def _load_data(self):
         with open(self.data_path, "r") as f:
@@ -92,6 +94,8 @@ class DenseRetriever:
         }
         for hit in results
     ]
+    def retrieve(self, query: str, top_k: int = 10):
+        return self.search(query, top_k=top_k)
 
 
 

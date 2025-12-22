@@ -43,6 +43,56 @@ class HybridReranker:
         scores = self.reranker.predict(pairs) 
         reranked = sorted( zip(scores, chunks), key=lambda x: x[0], reverse=True ) 
         return [ {**chunk, "rerank_score": score} for score, chunk in reranked[:top_k] ]
+    
+    # 
+    # def retrieve_multiple(self, queries, top_k=20):
+    #     all_results = {}
+
+    #     per_query_k = max(5, top_k // len(queries))
+
+    #     for q in queries:
+    #         bm25_hits = self.bm25.retrieve(q, top_k=per_query_k)
+    #         dense_hits = self.dense.retrieve(q, top_k=per_query_k)
+
+    #         for hit in bm25_hits + dense_hits:
+    #             cid = hit["chunk_id"]
+    #             if cid not in all_results:
+    #                 all_results[cid] = hit
+    #             else:
+    #                 all_results[cid]["score"] = max(
+    #                     all_results[cid]["score"], hit["score"]
+    #                 )
+
+        # return list(all_results.values())
+    def retrieve_multiple(self, queries, per_query_k=5):
+        all_results = {}
+
+        for q in queries:
+            bm25_hits = self.bm25.retrieve(q, top_k=per_query_k)
+            dense_hits = self.dense.retrieve(q, top_k=per_query_k)
+
+            for hit in bm25_hits:
+                cid = hit["chunk_id"]
+                score = hit.get("bm25_score", 0.0)
+
+                if cid not in all_results:
+                    all_results[cid] = hit
+                    all_results[cid]["score"] = score
+                else:
+                    all_results[cid]["score"] = max(all_results[cid]["score"], score)
+            for hit in dense_hits:
+                cid = hit["chunk_id"]
+                score = hit.get("dense_score", 0.0)
+
+                if cid not in all_results:
+                    all_results[cid] = hit
+                    all_results[cid]["score"] = score
+                else:
+                    all_results[cid]["score"] = max(all_results[cid]["score"], score)
+        return list(all_results.values())
+
+
+
 
 if __name__ == "__main__":
     pipeline = HybridReranker()
